@@ -1,5 +1,12 @@
 <html>
-<head> </head>
+<head> 
+<?php 	
+	session_start();
+	if(is_null($_SESSION['online'])){
+		header('Location: '.'/inventariobrand/login/index.html');
+	}		
+	?>
+</head>
 <title> Inventario Brand </title>
 
 <body>
@@ -28,7 +35,7 @@
   $sqli = "SELECT * FROM tipos_equip";
   $result = mysqli_query(OpenCon(), $sqli);
   while ($row = mysqli_fetch_array($result)) {
-  echo "<option value=".$row['Nome'].">".$row['Nome']."</option>";
+  echo "<option value='".$row['Nome']."'>".$row['Nome']."</option>";
   }
 
   echo '</select>';
@@ -50,7 +57,7 @@
   echo "<form method='post'>";    
 
   if(isset($tipo_equip_box)){
-    echo "<input type='hidden' id='tipo_equip' name='tipo_equip_box' value=$tipo_equip_box>";
+    echo "<input type='hidden' id='tipo_equip' name='tipo_equip_box' value='".$tipo_equip_box."'>";
   }
 
   //Preenche a combo box com as informações de Setores
@@ -65,7 +72,7 @@
   $sqli = "SELECT * FROM setores";
   $result = mysqli_query(OpenCon(), $sqli);
   while ($row = mysqli_fetch_array($result)) {
-  echo "<option value=".$row['Setor'].">".$row['Setor']."</option>";
+  echo "<option value='".$row['Setor']."'>".$row['Setor']."</option>";
   }
 
   echo '</select>';
@@ -75,13 +82,25 @@
 
 
   ?>
+  
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <?php       
 
   //FORMULARIO PRINCIPAL
- echo "<form action='$cadastro_sql' method='post'>";
+ echo "<form action='$cadastro_sql' method='post' enctype='multipart/form-data'>";
  ?>
  <!-- PAGE INFO SENT TO PATHING -->
  <?php 
@@ -91,33 +110,41 @@
  if(isset($_POST['setores'])){
   $setores = $_POST['setores']; 
   //POST DO SETOR = "setor"
-  echo "<input type='hidden' id='setor' name='setor' value='$setores'/>";
+  echo "<input type='hidden' id='setor' name='setor' value='".$setores."'/>";
   }
  ?>
   <input type="hidden" id="pagina" name="pagina" value="<?php echo "$cadastro_equip";?>" /> 
   <!--POST DO TIPO DE EQUIP = "tipo_equip"-->
   <input type="hidden" id="tipo_equip" name="tipo_equip_box" value="<?php echo "$tipo_equip_box";?>" /> 
-  
 
-
-
-
-  
-  
   <?php 
   if(isset($tipo_equip_box)){
     if(strcmp($tipo_equip_box, "Notebook") == 0 || strcmp($tipo_equip_box, "Computador") == 0){
-          //POST DO NOME DA MAQUINA = "nome_maq"
-         // <!--POST DO MODELO DE EQUIP = "modelo"-->
+          
+      
+      
+         
           echo " <label for='modelo'>Modelo:</label><br>
            <input type='text' id='modelo' name='modelo'> 
            <br>
            <br>";
-
-
+           echo '<label for="setor">Nota Fiscal em PDF:</label>
+           <div class="formgroup container-fluid">
+               <input type="file" id="file" name="file" accept=".pdf"/>
+               <input type="hidden" name="MAX_FILE_SIZE" value="67108864"/> <!--64 MBs worth in bytes-->
+           </div>
+           <br>';
+         //POST DO NOME DA MAQUINA = "nome_maq"
+         // <!--POST DO MODELO DE EQUIP = "modelo"-->
       echo "<label for='nome_maq'>Nome da Máquina:</label><br>
       <input type='text' id='nome_maq' name='nome_maq'> 
       <br>";
+      //POST DO NOME DO USUARIO
+      echo '<br>';
+      echo "<label for='nome_maq'>Usuario:</label><br>
+      <input type='text' id='usuario' name='usuario'> 
+      <br>";
+
       //Preenche a combo box com as informações de processador
       echo "<br><label for='processador'>Processador:</label>";
       //POST DO PROCESSADOR = "processador"
@@ -127,7 +154,7 @@
     $sqli = "SELECT * FROM modelos_comp WHERE Tipo='Processador'";
     $result = mysqli_query(OpenCon(), $sqli);
     while ($row = mysqli_fetch_array($result)) {
-    echo "<option value=".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade'].">".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."</option>";
+    echo "<option value='".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."'>".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."</option>";
     }
   
     echo '</select> <br><br>';
@@ -140,8 +167,8 @@
    
      $sqli = "SELECT * FROM modelos_comp WHERE Tipo='Placa-Mae'";
      $result = mysqli_query(OpenCon(), $sqli);
-     while ($row = mysqli_fetch_array($result)) {
-     echo "<option value=".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade'].">".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."</option>";
+     while ($row = mysqli_fetch_array($result)){
+     echo "<option value='".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."'>".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."</option>";
      }
    
      echo '</select> <br><br>';
@@ -155,7 +182,7 @@
     $sqli = "SELECT * FROM modelos_comp WHERE Tipo='Placa-de-Video'";
     $result = mysqli_query(OpenCon(), $sqli);
     while ($row = mysqli_fetch_array($result)) {
-    echo "<option value=".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade'].">".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."</option>";
+    echo "<option value='".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."'>".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."</option>";
     }
   
     echo '</select> <br><br>';
@@ -169,7 +196,7 @@
      $sqli = "SELECT * FROM modelos_comp WHERE Tipo='Memoria'";
      $result = mysqli_query(OpenCon(), $sqli);
      while ($row = mysqli_fetch_array($result)) {
-     echo "<option value=".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade'].">".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."</option>";
+     echo "<option value='".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."'>".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."</option>";
      }
    
      echo '</select> <br><br>';
@@ -183,42 +210,50 @@
        $sqli = "SELECT * FROM modelos_comp WHERE Tipo='Disco' OR Tipo='SSD'";
        $result = mysqli_query(OpenCon(), $sqli);
        while ($row = mysqli_fetch_array($result)) {
-       echo "<option value=".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade'].">".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."</option>";
+       echo "<option value='".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."'>".$row['Fabricante']." ".$row['Nome']." ".$row['Capacidade']."</option>";
        }
      
        echo '</select> <br><br>';
   
   
     }else if(strcmp($tipo_equip_box, "Impressora") == 0){
-  //Preenche a combo box com as informações de Impressora
-      echo "<label for='tipo_equip'>Modelo de Impressora:</label>";
+     
+      echo "<br>";
       //POST DE MODELO DE IMPRESSORA = "impressora_mod"
-      echo '<select name="impressora_mod"">';
+            echo '<label for="setor">Nota Fiscal em PDF:</label>
+      <div class="formgroup container-fluid">
+          <input type="file" id="file" name="file" accept=".pdf"/>
+          <input type="hidden" name="MAX_FILE_SIZE" value="67108864"/> <!--64 MBs worth in bytes-->
+      </div>
+      <br>';
 
-
+        //Preenche a combo box com as informações de Impressora
+        echo "<label for='tipo_equip'>Modelo de Impressora:</label>";
+      echo '<select name="impressora_mod">';
       $sqli = "SELECT * FROM modelos_comp WHERE Tipo='Impressora'";
       $result = mysqli_query(OpenCon(), $sqli);
       while ($row = mysqli_fetch_array($result)) {
-      echo "<option value=".$row['Fabricante']." ".$row['Nome'].">".$row['Fabricante']." ".$row['Nome']."</option>";
+      echo "<option value='".$row['Fabricante']." ".$row['Nome']."'>".$row['Fabricante']." ".$row['Nome']."</option>";
       }
 
       echo '</select> <br><br>';
 
+
     }else{
-      //<!--POST DO MODELO DE EQUIP = "modelo"-->
+      //<!--POST DO MODELO DE EQUIP = "modelo"-->      
  echo " <label for='modelo'>Modelo:</label><br>
   <input type='text' id='modelo' name='modelo'> 
   <br>
   <br>";
-
+  echo '<label for="setor">Nota Fiscal em PDF:</label>
+  <div class="formgroup container-fluid">
+      <input type="file" id="file" name="file" accept=".pdf"/>
+      <input type="hidden" name="MAX_FILE_SIZE" value="67108864"/> <!--64 MBs worth in bytes-->
+  </div>
+  <br>';
     }
 
   }
-  
-  
-  
-  
-  
   
   ?>
  
@@ -233,8 +268,5 @@
   ?>
   <input type="submit" name="submit" id="submit" class="button" value="Menu"/>
   </form>
-  
-
-
 </body>
 </html>

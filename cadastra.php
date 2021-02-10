@@ -1,5 +1,12 @@
 <html>
-<head> </head>
+<head> 
+<?php 	
+	session_start();
+	if(is_null($_SESSION['online'])){
+		header('Location: '.'/inventariobrand/login/index.html');
+	}		
+	?>
+</head>
 <title> Inventario Brand </title>
 
 <body>
@@ -10,7 +17,8 @@ INCLUDE "$dblogin";
 
 $pagina_atual = $_POST["pagina"];
 
-
+//_________________________________________________________________________________________________________
+//
 //  CADASTRO DE EQUIPAMENTO
 //_________________________________________________________________________________________________________
 if(strcmp($pagina_atual, $cadastro_equip) == 0){
@@ -45,7 +53,7 @@ if(strcmp($pagina_atual, $cadastro_equip) == 0){
   if(isset($_POST['memoria'])){
     $memoria = $_POST['memoria'];
   }
-  if(isset($_POST['disco'];)){
+  if(isset($_POST['disco'])){
     $disco = $_POST['disco'];
   }
   if(isset($_POST['impressora_mod'])){    
@@ -53,6 +61,24 @@ if(strcmp($pagina_atual, $cadastro_equip) == 0){
   }
   if(isset($_POST['nome_maq'])){
     $nome_maq = $_POST['nome_maq'];
+  }
+  if(isset($_POST['usuario'])){
+    $usuario = $_POST['usuario'];
+  }
+
+
+  //NOTA FISCAL UPLOAD ----------------------------
+
+  if(isset($_FILES['file'])){
+    //$nota_pdf = $_POST['nota_pdf'];
+    //Define um nome aleatório para a inserção do ID de Nota Fiscal do Equipamento inserido no banco
+    $pname = rand(100,10000)."-".$_FILES['file']['name'];
+
+    $tname = $_FILES['file']['tmp_name'];
+    $uploads_dir = './document';
+
+    move_uploaded_file($tname, $uploads_dir.'/'.$pname);
+
   }
 
 
@@ -63,28 +89,20 @@ if(strcmp($pagina_atual, $cadastro_equip) == 0){
   if(isset($tipo_equip)){
 
     if(strcmp($tipo_equip, "Notebook") == 0 || strcmp($tipo_equip, "Computador") == 0){
-    $sql = "INSERT INTO equipamentos (Tipo, Modelo, Setor, Processador, Placa_mae, GPU, RAM, MEM_FIS, Nome da Máquina) 
-    VALUES ('$tipo_equip','$modelo','$setor','$processador','$placa_mae','$placa_video','$memoria','$disco','$nome_maq')";
+    $sql = "INSERT INTO equipamentos (Tipo, Modelo, Setor, Processador, Placa_mae, GPU, RAM, MEM_FIS, NOTA_FIS, Nome_Maq, Usuario) 
+    VALUES ('$tipo_equip','$modelo','$setor','$processador','$placa_mae','$placa_video','$memoria','$disco','$pname','$nome_maq','$usuario')";
       
     }else if(strcmp($tipo_equip, "Impressora") == 0){
 
-      $sql = "INSERT INTO equipamentos (Tipo, Modelo, Setor) 
-    VALUES ('$tipo_equip','$modelo_impressora','$setor')";
+      $sql = "INSERT INTO equipamentos (Tipo, Modelo, Setor, NOTA_FIS) 
+    VALUES ('$tipo_equip','$modelo_impressora','$setor','$pname')";
+
+    }else if(strcmp($tipo_equip, "Monitor") == 0){
+
+      $sql = "INSERT INTO equipamentos (Tipo, Modelo, Setor, NOTA_FIS) 
+    VALUES ('$tipo_equip','$modelo','$setor','$pname')";
 
     }
-    
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   }
 
@@ -104,7 +122,7 @@ if(strcmp($pagina_atual, $cadastro_equip) == 0){
 
 }
 //_________________________________________________________________________________________________________
-
+//
 // CADASTRO DE SETORES
 //_________________________________________________________________________________________________________
 if(strcmp($pagina_atual, $cadastro_setor) == 0)
@@ -131,7 +149,7 @@ if(strcmp($pagina_atual, $cadastro_setor) == 0)
 
 }
 //_________________________________________________________________________________________________________
-
+//
 // CADASTRO DE TIPOS DE COMPONENTES
 //_________________________________________________________________________________________________________
 if(strcmp($pagina_atual, $cadastro_tipos_comp) == 0)
@@ -158,8 +176,7 @@ if(strcmp($pagina_atual, $cadastro_tipos_comp) == 0)
 
 }
 //_________________________________________________________________________________________________________
-
-
+//
 // CADASTRO DE TIPOS DE EQUIP
 //_________________________________________________________________________________________________________
 if(strcmp($pagina_atual, $cadastro_tipos_equip) == 0)
@@ -186,7 +203,7 @@ if(strcmp($pagina_atual, $cadastro_tipos_equip) == 0)
 
 }
 //_________________________________________________________________________________________________________
-
+//
 // CADASTRO DE MODELOS DE COMPONENTES
 //_________________________________________________________________________________________________________
 if(strcmp($pagina_atual, $cadastro_modelos_comp) == 0)

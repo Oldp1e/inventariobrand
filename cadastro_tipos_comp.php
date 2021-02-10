@@ -1,5 +1,12 @@
 <html>
-<head> </head>
+<head>
+<?php 	
+	session_start();
+	if(is_null($_SESSION['online'])){
+		header('Location: '.'/inventariobrand/login/index.html');
+	}		
+	?>  
+</head>
 <title> Inventario Brand </title>
 
 <body>
